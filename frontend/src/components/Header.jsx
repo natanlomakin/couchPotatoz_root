@@ -24,6 +24,7 @@ const Header = () => {
             <li className="nav-item">{LinkButton("Groups", "/groups")}</li>
             <li className="nav-item">{LinkButton("Games", "/games")}</li>
             <li className="nav-item">{LinkButton("Friends", "/friends")}</li>
+            <li className="nav-item">{LinkButton("Library", "/library")}</li>
           </ul>
           <form className="d-flex" role="search">
             <input

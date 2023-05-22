@@ -5,6 +5,8 @@ import "./index.css";
 import App from "./App";
 import Home from "./pages/Home.jsx";
 import Groups from "./pages/Groups";
+import Library from "./pages/Library";
+import SingleGroup from "./pages/SingleGroup";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -13,6 +15,8 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path="/" element={<App />}>
           <Route path="/" element={<Home />}></Route>
           <Route path="/groups" element={<Groups />}></Route>
+          <Route path="/groups/:libraryId" element={<SingleGroup />}></Route>
+          <Route path="/library/:userId" element={<Library />}></Route>
         </Route>
       </Routes>
     </BrowserRouter>

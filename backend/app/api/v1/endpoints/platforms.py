@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Body
-from app.api.deps.database import get_platforms, get_platform, create_platform, remove_platform
-from app.api.v1.schemas.platform import PlatformBase
-from app.api.v1.serializers.platformSerializer import platformEntitny
+from api.deps.database import get_platforms, get_platform, create_platform, remove_platform
+from api.v1.schemas.platform import PlatformBase
+from api.v1.serializers.platformSerializer import platformEntitny
 
 router = APIRouter()
 
@@ -38,6 +38,7 @@ async def add_platform(platform: PlatformBase):
         "description": "Platform created successfully",
         "data": new_platform
     }
+
 
 @router.delete("/{id}", response_description="Platform data deleted")
 async def delete_platform(id: str):

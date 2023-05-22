@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.api.v1.endpoints import users, platforms, friends, massages, librarys, groups, games, group_members, group_massages
+from api.v1.endpoints import users, platforms, friends, massages, librarys, groups, games, group_members, group_massages
 
 api_router = APIRouter()
 

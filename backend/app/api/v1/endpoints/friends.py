@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from app.api.deps.database import retrive_all_friends, retrive_friend, create_friend, update_friend_data, remove_friendship
-from app.api.v1.schemas.friend import FriendBase, UpdateFriend, CreateFriend
-from app.api.v1.serializers.friendSerializer import friendEntitny
+from api.deps.database import retrive_all_friends, retrive_friend, create_friend, update_friend_data, remove_friendship
+from api.v1.schemas.friend import FriendBase, UpdateFriend, CreateFriend
+from api.v1.serializers.friendSerializer import friendEntitny
 
 router = APIRouter()
 
@@ -16,6 +16,7 @@ async def get_all_friends():
         "data": friends
     }
 
+
 @router.get("/{id}", response_description="Retrive friendship in the database")
 async def get_friend(id: str):
     friend = await retrive_friend(id)
@@ -26,6 +27,7 @@ async def get_friend(id: str):
         "data": friend
     }
 
+
 @router.post("/", response_description="New friendship data added to the database")
 async def add_friend(friend: FriendBase):
     new_friend = await create_friend(friend)
@@ -35,6 +37,7 @@ async def add_friend(friend: FriendBase):
         "description": "User created successfully",
         "data": new_friend
     }
+
 
 @router.put("/{id}", response_description="Friendship data has been updated")
 async def update_friendship(id: str, data: UpdateFriend):
@@ -52,6 +55,7 @@ async def update_friendship(id: str, data: UpdateFriend):
         "description": f"Friendship with id {id} doesn't exist",
         "data": False
     }
+
 
 @router.delete("/{id}", response_description="Friendship data deleted")
 async def delete_friendship(id: str):

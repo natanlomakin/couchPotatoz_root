@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from app.api.deps.database import retrive_group_masseges, retrive_single_group_massage, create_group_massage, delete_group_massage_data
-from app.api.v1.schemas.group_massage import GroupMassageBase
-from app.api.v1.serializers.group_massageSerializer import group_massageEntitny
+from api.deps.database import retrive_group_masseges, retrive_single_group_massage, create_group_massage, delete_group_massage_data
+from api.v1.schemas.group_massage import GroupMassageBase
+from api.v1.serializers.group_massageSerializer import group_massageEntitny
 
 router = APIRouter()
 

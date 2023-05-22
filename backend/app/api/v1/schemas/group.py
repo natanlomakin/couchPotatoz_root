@@ -5,6 +5,7 @@ from bson.objectid import ObjectId
 
 
 class GroupBase(BaseModel):
+    _id: ObjectId
     title: str
     summery: str
     createdBy_id: str

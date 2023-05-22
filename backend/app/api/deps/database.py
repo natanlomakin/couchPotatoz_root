@@ -1,25 +1,25 @@
 from pymongo import mongo_client, ReturnDocument
 from fastapi import HTTPException, status
 from typing import List, Union
-from app.config.settings import settings
-from app.api.v1.schemas.user import *
-from app.api.v1.schemas.platform import *
-from app.api.v1.schemas.friend import *
-from app.api.v1.schemas.massage import *
-from app.api.v1.schemas.library import *
-from app.api.v1.schemas.group import *
-from app.api.v1.schemas.game import *
-from app.api.v1.schemas.group_member import *
-from app.api.v1.schemas.group_massage import *
-from app.api.v1.serializers.userSerializer import userEntitny, listUserEntity, userUpdatedEntity
-from app.api.v1.serializers.platformSerializer import platformEntitny
-from app.api.v1.serializers.friendSerializer import friendEntitny, updateFriendEntity
-from app.api.v1.serializers.massageSerializer import massageEntitny, updateMassageEntity
-from app.api.v1.serializers.librarySerializer import libraryEntitny
-from app.api.v1.serializers.groupSerializer import groupEntitny, updateGroupEntity
-from app.api.v1.serializers.gameSerializer import gameEntitny, UpdateGameEntity
-from app.api.v1.serializers.group_memberSerializer import group_memberEntitny, updateGroup_memberEntity
-from app.api.v1.serializers.group_massageSerializer import group_massageEntitny
+from config.settings import settings
+from api.v1.schemas.user import *
+from api.v1.schemas.platform import *
+from api.v1.schemas.friend import *
+from api.v1.schemas.massage import *
+from api.v1.schemas.library import *
+from api.v1.schemas.group import *
+from api.v1.schemas.game import *
+from api.v1.schemas.group_member import *
+from api.v1.schemas.group_massage import *
+from api.v1.serializers.userSerializer import userEntitny, listUserEntity, userUpdatedEntity
+from api.v1.serializers.platformSerializer import platformEntitny
+from api.v1.serializers.friendSerializer import friendEntitny, updateFriendEntity
+from api.v1.serializers.massageSerializer import massageEntitny, updateMassageEntity
+from api.v1.serializers.librarySerializer import libraryEntitny
+from api.v1.serializers.groupSerializer import groupEntitny, updateGroupEntity
+from api.v1.serializers.gameSerializer import gameEntitny, UpdateGameEntity
+from api.v1.serializers.group_memberSerializer import group_memberEntitny, updateGroup_memberEntity
+from api.v1.serializers.group_massageSerializer import group_massageEntitny
 from bson.objectid import ObjectId
 
 client = mongo_client.MongoClient(settings.DATABASE_URL)
@@ -62,7 +62,6 @@ async def remove_user(id: str) -> bool:
 async def update_user_data(id: str, data: UpdateUser):
     user = user_collection.find_one_and_update({'_id': ObjectId(str(id))}, {
                                                "$set": data.dict(exclude_none=True)}, return_document=ReturnDocument.AFTER)
-    print(user)
     if user:
         user = userUpdatedEntity(user)
         return user
@@ -195,10 +194,12 @@ group_collection = db.group
 
 async def retrive_all_groups():
     groups = []
+    groupIds = []
     cursor = group_collection.find()
     for document in cursor:
+        groupIds.append(str(document["_id"]))
         groups.append(GroupBase(**document))
-    return groups
+    return groups, groupIds
 
 
 async def retrive_single_group(id: str) -> GroupBase:
@@ -255,6 +256,7 @@ async def retrive_single_group_massage(groupId: str, userId: str) -> GroupMassag
             group_massage.append(GroupMassageBase(**document))
     return group_massage
 
+
 async def create_group_massage(massage: GroupMassageBase) -> GroupMassageBase:
     massage.createdAt = datetime.utcnow()
     _id = group_massage_collection.insert_one(dict(massage))
@@ -262,6 +264,7 @@ async def create_group_massage(massage: GroupMassageBase) -> GroupMassageBase:
         {"_id": ObjectId(str(_id.inserted_id))})
     new_massage = group_massageEntitny(new_massage)
     return new_massage
+
 
 async def delete_group_massage_data(groupId: str):
     deleted_group_massage = group_massage_collection.find_one_and_delete(
@@ -277,7 +280,6 @@ async def retrive_group_members(id: str) -> GroupMemberBase:
     group_members = []
     cursor = group_member_collection.find({"group_id": str(id)})
     for document in cursor:
-        print(document["user_id"])
         group_members.append(GroupMemberBase(**document))
     return group_members
 
@@ -319,9 +321,9 @@ async def delete_group_member_data(groupId: str, memberId: str):
 library_collection = db.library
 
 
-async def retrive_all_librarys():
+async def retrive_all_librarys(userId: str):
     librarys = []
-    cursor = library_collection.find()
+    cursor = library_collection.find({"user_id": str(userId)})
     for document in cursor:
         librarys.append(LibraryBase(**document))
     return librarys
@@ -346,7 +348,6 @@ async def create_library(library: LibraryBase) -> LibraryBase:
 
 async def delete_library(id: str) -> bool:
     library = library_collection.find_one({'_id': ObjectId(str(id))})
-    print(library)
     if library:
         library_collection.delete_one({'_id': ObjectId(str(id))})
         return True

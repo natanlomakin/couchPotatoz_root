@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Body
-from app.api.deps.database import retrive_users, add_new_user, retrive_single_user, remove_user, update_user_data
-from app.api.v1.schemas.user import UserBase, CreateUser, User, ListUser, CreateUser, UpdateUser
-from app.api.v1.serializers.userSerializer import listUserEntity
+from api.deps.database import retrive_users, add_new_user, retrive_single_user, remove_user, update_user_data
+from api.v1.schemas.user import UserBase, CreateUser, User, ListUser, CreateUser, UpdateUser
+from api.v1.serializers.userSerializer import listUserEntity
 
 router = APIRouter()
 
