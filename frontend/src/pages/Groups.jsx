@@ -14,7 +14,6 @@ const Groups = () => {
         Accept: "application/json",
         "Content-Type": "application/json",
       });
-      console.log(response.data.library_ids);
       setGroups(response.data.data);
       setGroupIds(response.data.library_ids);
     };

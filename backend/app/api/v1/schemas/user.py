@@ -19,13 +19,13 @@ class UserBase(BaseModel):
 
 
 class CreateUser(UserBase):
-    email: EmailStr
     password: constr(min_length=8)
 
     class Config:
         orm_mode = True
         allow_population_by_field_name = True
         arbitrary_types_allowed = True
+
 
 class UpdateUser(BaseModel):
     userName: str | None = None

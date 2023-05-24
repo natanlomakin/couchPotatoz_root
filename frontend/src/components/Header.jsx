@@ -26,6 +26,12 @@ const Header = () => {
             <li className="nav-item">{LinkButton("Friends", "/friends")}</li>
             <li className="nav-item">{LinkButton("Library", "/library")}</li>
           </ul>
+          <div>
+            <ul className="navbar-nav">
+              <li className="nav-item">{LinkButton("Login", "/login")}</li>
+              <li className="nav-item">{LinkButton("Signup", "/signup")}</li>
+            </ul>
+          </div>
           <form className="d-flex" role="search">
             <input
               className="form-control me-2"

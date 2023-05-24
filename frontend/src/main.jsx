@@ -7,6 +7,8 @@ import Home from "./pages/Home.jsx";
 import Groups from "./pages/Groups";
 import Library from "./pages/Library";
 import SingleGroup from "./pages/SingleGroup";
+import Signup from "./pages/Signup";
+import Login from "./pages/Login";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -17,6 +19,8 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           <Route path="/groups" element={<Groups />}></Route>
           <Route path="/groups/:libraryId" element={<SingleGroup />}></Route>
           <Route path="/library/:userId" element={<Library />}></Route>
+          <Route path="/signup" element={<Signup />}></Route>
+          <Route path="/login" element={<Login />}></Route>
         </Route>
       </Routes>
     </BrowserRouter>
