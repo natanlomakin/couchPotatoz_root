@@ -2,11 +2,12 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from api.deps.database import retrive_all_librarys, retrive_single_library, create_library, delete_library
 from api.v1.schemas.library import LibraryBase
 from api.v1.serializers.librarySerializer import libraryEntitny
+from ...deps.auth_bearer import JWTBearer
 
 router = APIRouter()
 
 
-@router.get("/{userId}", response_description="Retrive all user librarys")
+@router.get("/{userId}", dependencies=[Depends(JWTBearer())], response_description="Retrive all user librarys")
 async def get_librarys(userId: str):
     librarys = await retrive_all_librarys(userId)
     if librarys:
@@ -24,7 +25,7 @@ async def get_librarys(userId: str):
     }
 
 
-@router.get("/{id}", response_description="Retrived specific library from database")
+@router.get("/{id}", dependencies=[Depends(JWTBearer())],response_description="Retrived specific library from database")
 async def get_single_library(id: str):
     library = await retrive_single_library(id)
     if library:
@@ -42,7 +43,7 @@ async def get_single_library(id: str):
     }
 
 
-@router.post("/", response_description="New library created")
+@router.post("/", dependencies=[Depends(JWTBearer())],response_description="New library created")
 async def add_library(library: LibraryBase):
     new_library = await create_library(library)
     return {

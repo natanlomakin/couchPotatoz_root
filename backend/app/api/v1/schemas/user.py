@@ -8,10 +8,10 @@ class UserBase(BaseModel):
     _id: ObjectId
     userName: str
     email: EmailStr
-    firstName: str
-    lastName: str
-    isActive: bool
-    profile_image_url: str
+    firstName: str | None = None
+    lastName: str | None = None
+    isActive: bool | None = None
+    profile_image_url: str | None = None
     createdAt: datetime | None = None
 
     class Config:
@@ -19,8 +19,13 @@ class UserBase(BaseModel):
 
 
 class CreateUser(UserBase):
+    email: EmailStr
     password: constr(min_length=8)
 
+    class Config:
+        orm_mode = True
+        allow_population_by_field_name = True
+        arbitrary_types_allowed = True
 
 class UpdateUser(BaseModel):
     userName: str | None = None

@@ -12,6 +12,14 @@ def userEntitny(user) -> dict:
     }
 
 
+def signupUserEntity(user) -> dict:
+    return{
+        "id": str(user["_id"]),
+        "email": user["email"],
+        "password": user["password"],
+    }
+
+
 def userUpdatedEntity(user) -> dict:
     return {
         "id": str(user["_id"]),

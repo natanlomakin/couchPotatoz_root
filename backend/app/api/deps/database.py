@@ -11,7 +11,7 @@ from api.v1.schemas.group import *
 from api.v1.schemas.game import *
 from api.v1.schemas.group_member import *
 from api.v1.schemas.group_massage import *
-from api.v1.serializers.userSerializer import userEntitny, listUserEntity, userUpdatedEntity
+from api.v1.serializers.userSerializer import userEntitny, listUserEntity, userUpdatedEntity, signupUserEntity
 from api.v1.serializers.platformSerializer import platformEntitny
 from api.v1.serializers.friendSerializer import friendEntitny, updateFriendEntity
 from api.v1.serializers.massageSerializer import massageEntitny, updateMassageEntity
@@ -21,6 +21,10 @@ from api.v1.serializers.gameSerializer import gameEntitny, UpdateGameEntity
 from api.v1.serializers.group_memberSerializer import group_memberEntitny, updateGroup_memberEntity
 from api.v1.serializers.group_massageSerializer import group_massageEntitny
 from bson.objectid import ObjectId
+from api.deps.auth import get_hashed_password, verify_password, create_access_token, create_refresh_token
+from fastapi.security import OAuth2PasswordRequestForm
+from fastapi.responses import RedirectResponse
+from fastapi import FastAPI, status, HTTPException, Depends
 
 client = mongo_client.MongoClient(settings.DATABASE_URL)
 db = client.potato
@@ -45,10 +49,25 @@ async def retrive_single_user(id: str) -> UserBase:
 
 async def add_new_user(new_user: CreateUser) -> CreateUser:
     new_user.createdAt = datetime.utcnow()
+    new_user.password = get_hashed_password(new_user.password)
     _id = user_collection.insert_one(dict(new_user))
     user = user_collection.find_one({"_id": ObjectId(str(_id.inserted_id))})
-    user = userEntitny(user)
+    user = signupUserEntity(user)
     return user
+
+
+async def login_user(form_data: OAuth2PasswordRequestForm = Depends()):
+    user = user_collection.find_one({"email": str(form_data.email)})
+    if user is None:
+        return RedirectResponse(url="/login", status_code=status.HTTP_401_UNAUTHORIZED)
+    hashed_password = user['password']
+    if not verify_password(form_data.password, hashed_password):
+        raise Exception(status_code=status.HTTP_400_BAD_REQUEST,
+                        detail="incorrect email or password")
+    tokens = {"access_token": create_access_token(
+        user['password']), "refresh_token": create_refresh_token(user['password'])}
+    print(tokens)
+    return tokens
 
 
 async def remove_user(id: str) -> bool:

@@ -2,11 +2,12 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from api.deps.database import retrive_all_friends, retrive_friend, create_friend, update_friend_data, remove_friendship
 from api.v1.schemas.friend import FriendBase, UpdateFriend, CreateFriend
 from api.v1.serializers.friendSerializer import friendEntitny
+from ...deps.auth_bearer import JWTBearer
 
 router = APIRouter()
 
 
-@router.get("/", response_description="Retrive all friendships in the database")
+@router.get("/", dependencies=[Depends(JWTBearer())], response_description="Retrive all friendships in the database")
 async def get_all_friends():
     friends = await retrive_all_friends()
     return {
@@ -17,7 +18,7 @@ async def get_all_friends():
     }
 
 
-@router.get("/{id}", response_description="Retrive friendship in the database")
+@router.get("/{id}", dependencies=[Depends(JWTBearer())], response_description="Retrive friendship in the database")
 async def get_friend(id: str):
     friend = await retrive_friend(id)
     return {
@@ -28,7 +29,7 @@ async def get_friend(id: str):
     }
 
 
-@router.post("/", response_description="New friendship data added to the database")
+@router.post("/", dependencies=[Depends(JWTBearer())], response_description="New friendship data added to the database")
 async def add_friend(friend: FriendBase):
     new_friend = await create_friend(friend)
     return {
@@ -39,7 +40,7 @@ async def add_friend(friend: FriendBase):
     }
 
 
-@router.put("/{id}", response_description="Friendship data has been updated")
+@router.put("/{id}", dependencies=[Depends(JWTBearer())], response_description="Friendship data has been updated")
 async def update_friendship(id: str, data: UpdateFriend):
     updated_friend = await update_friend_data(id, data)
     if updated_friend:
@@ -57,7 +58,7 @@ async def update_friendship(id: str, data: UpdateFriend):
     }
 
 
-@router.delete("/{id}", response_description="Friendship data deleted")
+@router.delete("/{id}", dependencies=[Depends(JWTBearer())],response_description="Friendship data deleted")
 async def delete_friendship(id: str):
     deleted_friendship = await remove_friendship(id)
     if deleted_friendship:

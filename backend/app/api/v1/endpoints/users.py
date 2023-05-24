@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Body
-from api.deps.database import retrive_users, add_new_user, retrive_single_user, remove_user, update_user_data
-from api.v1.schemas.user import UserBase, CreateUser, User, ListUser, CreateUser, UpdateUser
+from api.deps.database import retrive_users, add_new_user, retrive_single_user, remove_user, update_user_data, login_user
+from api.v1.schemas.user import UserBase, CreateUser, User, LoginUser, ListUser, CreateUser, UpdateUser
 from api.v1.serializers.userSerializer import listUserEntity
+from ...deps.auth_bearer import JWTBearer
 
 router = APIRouter()
 
@@ -17,7 +18,7 @@ async def get_users():
     }
 
 
-@router.get("/{id}", response_description="retrive single user data")
+@router.get("/{id}", dependencies=[Depends(JWTBearer())], response_description="retrive single user data")
 async def get_user(id: str):
     user = await retrive_single_user(id)
     return {
@@ -28,13 +29,24 @@ async def get_user(id: str):
     }
 
 
-@router.post("/", response_description="New user data add to the database")
+@router.post("/signup", response_description="New user data add to the database")
 async def add_user(user: CreateUser):
     new_user = await add_new_user(user)
     return {
         "status_code": 200,
         "response_type": "success",
         "description": "User created successfully",
+        "data": new_user
+    }
+
+
+@router.post("/login", response_description="Login user")
+async def add_user(user: LoginUser):
+    new_user = await login_user(user)
+    return {
+        "status_code": 200,
+        "response_type": "success",
+        "description": "User logged in successfully",
         "data": new_user
     }
 
@@ -57,7 +69,7 @@ async def delete_user(id: str):
     }
 
 
-@router.put("/{id}", response_description="User data has been updated")
+@router.put("/{id}", dependencies=[Depends(JWTBearer())], response_description="User data has been updated")
 async def update_user(id: str, data: UpdateUser):
     updated_user = await update_user_data(id, data)
     if updated_user:

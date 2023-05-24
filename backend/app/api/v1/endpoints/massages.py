@@ -2,11 +2,12 @@ from fastapi import APIRouter, Depends, HTTPException, status, Body
 from api.deps.database import retrive_all_massages, retrive_single_massage, create_massage, remove_massage, update_massage_data
 from api.v1.schemas.massage import MassageBase, UpadateMassage
 from api.v1.serializers.massageSerializer import massageEntitny
+from ...deps.auth_bearer import JWTBearer
 
 router = APIRouter()
 
 
-@router.get("/", response_description="retrived all massages")
+@router.get("/", dependencies=[Depends(JWTBearer())], response_description="retrived all massages")
 async def get_massages():
     massages = await retrive_all_massages()
     return {
@@ -17,7 +18,7 @@ async def get_massages():
     }
 
 
-@router.get("/{id}", response_description="retrived spacific massage")
+@router.get("/{id}", dependencies=[Depends(JWTBearer())], response_description="retrived spacific massage")
 async def get_massage(id: str):
     massage = await retrive_single_massage(id)
     return {
@@ -28,7 +29,7 @@ async def get_massage(id: str):
     }
 
 
-@router.post("/", response_description="New massage created")
+@router.post("/", dependencies=[Depends(JWTBearer())], response_description="New massage created")
 async def create_new_massage(massage: MassageBase):
     new_massage = await create_massage(massage)
     return {
@@ -39,7 +40,7 @@ async def create_new_massage(massage: MassageBase):
     }
 
 
-@router.put("/{id}", response_description="Massage data has been updated")
+@router.put("/{id}", dependencies=[Depends(JWTBearer())], response_description="Massage data has been updated")
 async def update_massage(id: str, massage: UpadateMassage):
     updated_massage = await update_massage_data(id, massage)
     if updated_massage:
@@ -57,7 +58,7 @@ async def update_massage(id: str, massage: UpadateMassage):
     }
 
 
-@router.delete("/{id}", response_description="Massage data delted")
+@router.delete("/{id}", dependencies=[Depends(JWTBearer())], response_description="Massage data delted")
 async def delete_massage(id: str):
     deleted_massage = await remove_massage(id)
     if deleted_massage:
