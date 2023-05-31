@@ -9,7 +9,6 @@ router = APIRouter()
 @router.get("/", response_description="Retrive all groups")
 async def get_groups():
     groups = await retrive_all_groups()
-    print(groups)
     if groups:
         return {
             "status_code": 200,

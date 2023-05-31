@@ -2,6 +2,7 @@ import React from "react";
 import "../static/css/header.css";
 import LinkButton from "./LinkButton";
 import RegButton from "./RegButton";
+import { removeCookie } from "../utils/cookieUtil";
 
 const Header = () => {
   return (
@@ -30,6 +31,12 @@ const Header = () => {
             <ul className="navbar-nav">
               <li className="nav-item">{LinkButton("Login", "/login")}</li>
               <li className="nav-item">{LinkButton("Signup", "/signup")}</li>
+              <li className="nav-item">
+                {RegButton("Sign out", "submit", () => {
+                  removeCookie("access_token");
+                  removeCookie("refresh_token");
+                })}
+              </li>
             </ul>
           </div>
           <form className="d-flex" role="search">

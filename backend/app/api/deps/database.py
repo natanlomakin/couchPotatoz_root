@@ -65,8 +65,7 @@ async def login_user(form_data: OAuth2PasswordRequestForm = Depends()):
         raise Exception(status_code=status.HTTP_400_BAD_REQUEST,
                         detail="incorrect email or password")
     tokens = {"access_token": create_access_token(
-        user['password']), "refresh_token": create_refresh_token(user['password'])}
-    print(tokens)
+        str(user['_id'])), "refresh_token": create_refresh_token(str(user['_id']))}
     return tokens
 
 

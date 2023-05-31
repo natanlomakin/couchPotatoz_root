@@ -18,7 +18,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           <Route path="/" element={<Home />}></Route>
           <Route path="/groups" element={<Groups />}></Route>
           <Route path="/groups/:libraryId" element={<SingleGroup />}></Route>
-          <Route path="/library/:userId" element={<Library />}></Route>
+          <Route path="/library" element={<Library />}></Route>
           <Route path="/signup" element={<Signup />}></Route>
           <Route path="/login" element={<Login />}></Route>
         </Route>

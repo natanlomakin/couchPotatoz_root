@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { SERVER_URL } from "../utils/serverUtil";
+import { getCookie } from "../utils/cookieUtil";
 
 const SingleGroup = () => {
   const { libraryId } = useParams();
@@ -38,8 +39,12 @@ const SingleGroup = () => {
       const response = await axios(
         SERVER_URL + "/users/" + groupData.createdBy_id,
         {
+          headers: {
+            authorization: "Bearer " + getCookie("access_token"),
+          },
           Accept: "application/json",
           "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
         }
       );
       setGroupCreator(response.data.data);
@@ -54,8 +59,15 @@ const SingleGroup = () => {
       const result = [];
       for (let i = 0; i < groupMembersId.length; i++) {
         result.push(
-          (await axios(SERVER_URL + "/users/" + groupMembersId[i].user_id)).data
-            .data
+          (
+            await axios(SERVER_URL + "/users/" + groupMembersId[i].user_id, {
+              headers: {
+                authorization: "Bearer " + getCookie("access_token"),
+              },
+              Accept: "application/json",
+              "Content-Type": "application/json",
+            })
+          ).data.data
         );
       }
       setGroupMembersData(result);
