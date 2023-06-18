@@ -5,12 +5,14 @@ import "./App.css";
 import { Outlet } from "react-router-dom";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import Friends from "./components/Friends";
 
 function App() {
   return (
     <div className="App">
       <Header />
       <Outlet />
+      <Friends />
       <Footer />
     </div>
   );

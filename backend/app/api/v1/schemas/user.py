@@ -54,3 +54,8 @@ class User(UserBase):
 
 class ListUser(BaseModel):
     result: List[UserBase]
+
+
+class UserFriend(BaseModel):
+    _id: ObjectId
+    userName: str

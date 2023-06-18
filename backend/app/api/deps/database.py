@@ -11,7 +11,7 @@ from api.v1.schemas.group import *
 from api.v1.schemas.game import *
 from api.v1.schemas.group_member import *
 from api.v1.schemas.group_massage import *
-from api.v1.serializers.userSerializer import userEntitny, listUserEntity, userUpdatedEntity, signupUserEntity
+from api.v1.serializers.userSerializer import userFriendEntity, userEntitny, listUserEntity, userUpdatedEntity, signupUserEntity
 from api.v1.serializers.platformSerializer import platformEntitny
 from api.v1.serializers.friendSerializer import friendEntitny, updateFriendEntity
 from api.v1.serializers.massageSerializer import massageEntitny, updateMassageEntity
@@ -44,6 +44,13 @@ async def retrive_single_user(id: str) -> UserBase:
     user = user_collection.find_one(
         {'_id': ObjectId(str(id))})
     user = userEntitny(user)
+    return user
+
+
+async def retrive_single_user_friend(id: str) -> UserFriend:
+    user = user_collection.find_one(
+        {'_id': ObjectId(str(id))})
+    user = userFriendEntity(user)
     return user
 
 
@@ -123,9 +130,9 @@ async def remove_platform(id: str) -> bool:
 friend_collection = db.friend
 
 
-async def retrive_all_friends():
+async def retrive_all_friends(userId: str):
     friends = []
-    cursor = friend_collection.find()
+    cursor = friend_collection.find({"source_id": str(userId)})
     for document in cursor:
         friends.append(FriendBase(**document))
     return friends

@@ -7,9 +7,9 @@ from ...deps.auth_bearer import JWTBearer
 router = APIRouter()
 
 
-@router.get("/", dependencies=[Depends(JWTBearer())], response_description="Retrive all friendships in the database")
-async def get_all_friends():
-    friends = await retrive_all_friends()
+@router.get("/{userId}", dependencies=[Depends(JWTBearer())], response_description="Retrive all friendships in the database")
+async def get_all_friends(userId: str):
+    friends = await retrive_all_friends(userId)
     return {
         "status_code": 200,
         "response_type": "success",
@@ -18,7 +18,7 @@ async def get_all_friends():
     }
 
 
-@router.get("/{id}", dependencies=[Depends(JWTBearer())], response_description="Retrive friendship in the database")
+@router.get("/", dependencies=[Depends(JWTBearer())], response_description="Retrive friendship in the database")
 async def get_friend(id: str):
     friend = await retrive_friend(id)
     return {
@@ -58,7 +58,7 @@ async def update_friendship(id: str, data: UpdateFriend):
     }
 
 
-@router.delete("/{id}", dependencies=[Depends(JWTBearer())],response_description="Friendship data deleted")
+@router.delete("/{id}", dependencies=[Depends(JWTBearer())], response_description="Friendship data deleted")
 async def delete_friendship(id: str):
     deleted_friendship = await remove_friendship(id)
     if deleted_friendship:

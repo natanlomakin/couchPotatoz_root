@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Body
-from api.deps.database import retrive_users, add_new_user, retrive_single_user, remove_user, update_user_data, login_user
+from api.deps.database import retrive_users, retrive_single_user_friend, add_new_user, retrive_single_user, remove_user, update_user_data, login_user
 from api.v1.schemas.user import UserBase, CreateUser, User, LoginUser, ListUser, CreateUser, UpdateUser
 from api.v1.serializers.userSerializer import listUserEntity
 from ...deps.auth_bearer import JWTBearer
@@ -21,6 +21,17 @@ async def get_users():
 @router.get("/{id}", dependencies=[Depends(JWTBearer())], response_description="retrive single user data")
 async def get_user(id: str):
     user = await retrive_single_user(id)
+    return {
+        "status_code": 200,
+        "response_type": "success",
+        "description": "User data retrieved successfully",
+        "data": user
+    }
+
+
+@router.get("/friend/{id}", response_description="retrive single user data")
+async def get_user(id: str):
+    user = await retrive_single_user_friend(id)
     return {
         "status_code": 200,
         "response_type": "success",

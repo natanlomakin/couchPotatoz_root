@@ -12,6 +12,13 @@ def userEntitny(user) -> dict:
     }
 
 
+def userFriendEntity(user) -> dict:
+    return{
+        "id": str(user["_id"]),
+        "userName": user["userName"]
+    }
+
+
 def signupUserEntity(user) -> dict:
     return{
         "id": str(user["_id"]),
