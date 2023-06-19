@@ -28,9 +28,10 @@ const Friends = () => {
       server_data();
       setIsUserLoggedIn(true);
     } else {
+      setUserFriendsList([]);
       setIsUserLoggedIn(false);
     }
-  }, [isUserFriendsUpdated, isUserLoggedIn]);
+  }, [userFriendsList, isUserFriendsUpdated, isUserLoggedIn]);
 
   useEffect(() => {
     setIsUserFriendsUpdated(false);
@@ -59,7 +60,7 @@ const Friends = () => {
       >
         Friends
       </button>
-      <div class="collapse" id="collapseExample">
+      <div className="collapse" id="collapseExample">
         {userFriendsData.map((friend, ind) => (
           <div className="card card-body" key={ind}>
             <h4>{friend.data.data.userName}</h4>
