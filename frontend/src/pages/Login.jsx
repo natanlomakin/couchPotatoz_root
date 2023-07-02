@@ -27,8 +27,8 @@ const Login = () => {
         console.log(response);
         setCookie("access_token", response.data.data.access_token);
         setCookie("refresh_token", response.data.data.refresh_token);
-      })
-      .then(navigate("/"));
+        window.location.reload();
+      });
   };
 
   return (

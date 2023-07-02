@@ -35,6 +35,7 @@ const Header = () => {
                 {RegButton("Sign out", "submit", () => {
                   removeCookie("access_token");
                   removeCookie("refresh_token");
+                  window.location.reload();
                 })}
               </li>
             </ul>

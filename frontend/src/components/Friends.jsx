@@ -31,10 +31,9 @@ const Friends = () => {
       setUserFriendsList([]);
       setIsUserLoggedIn(false);
     }
-  }, [userFriendsList, isUserFriendsUpdated, isUserLoggedIn]);
+  }, [isUserFriendsUpdated, isUserLoggedIn]);
 
   useEffect(() => {
-    setIsUserFriendsUpdated(false);
     const result = [];
     const userFriendsServerData = async () => {
       for (let i = 0; i < userFriendsList.length; i++) {
