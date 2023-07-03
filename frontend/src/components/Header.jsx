@@ -24,7 +24,6 @@ const Header = () => {
           <ul className="navbar-nav me-auto mb-2 mb-lg-0">
             <li className="nav-item">{LinkButton("Groups", "/groups")}</li>
             <li className="nav-item">{LinkButton("Games", "/games")}</li>
-            <li className="nav-item">{LinkButton("Friends", "/friends")}</li>
             <li className="nav-item">{LinkButton("Library", "/library")}</li>
           </ul>
           <div>

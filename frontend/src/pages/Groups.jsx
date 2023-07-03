@@ -16,6 +16,7 @@ const Groups = () => {
       });
       setGroups(response.data.data);
       setGroupIds(response.data.library_ids);
+      console.log(response.data);
     };
     server_data();
   }, []);

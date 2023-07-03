@@ -7,10 +7,12 @@ import LibraryGameContext from "../App";
 import userLibrarys from "../App";
 import { getCookie } from "../utils/cookieUtil";
 import { parseJwt } from "../utils/tokenDecodeUtil";
+import RegButton from "../components/RegButton";
 
 const Library = () => {
   const [user, setUser] = useState("");
   const [userLibrarys, setuserLibrarys] = useState([]);
+  const [userLibraryIds, setUserLibraryIds] = useState([]);
   const [userLibrarysGames, setuserLibrarysGames] = useState([]);
   const [isLibraryUpdated, setIsLibraryUpdated] = useState(false);
   const [userId, setUserId] = useState("");
@@ -19,8 +21,7 @@ const Library = () => {
   useEffect(() => {
     setIsLibraryUpdated(false);
     const server_data = async () => {
-      /* console.log(userId); */
-      const response = await axios.get(SERVER_URL + "/librarys/" + userId, {
+      const response = await axios(SERVER_URL + "/librarys/" + userId, {
         headers: {
           authorization: "Bearer " + getCookie("access_token"),
         },
@@ -28,6 +29,7 @@ const Library = () => {
         "Content-Type": "application/json",
       });
       setuserLibrarys(response.data.data);
+      setUserLibraryIds(response.data.library_ids);
     };
     if (getCookie("access_token")) {
       setUserId(parseJwt(getCookie("access_token")).sub);
@@ -52,6 +54,17 @@ const Library = () => {
     libraryGameData();
   }, [userLibrarys]);
 
+  const removeGameFromLibrary = async (libraryId) => {
+    setIsLibraryUpdated(true);
+    const response = await axios.delete(SERVER_URL + "/librarys/" + libraryId, {
+      headers: {
+        authorization: "Bearer " + getCookie("access_token"),
+      },
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    });
+  };
+
   return (
     <div>
       {isUserLoggedIn ? (
@@ -60,10 +73,16 @@ const Library = () => {
           {userLibrarysGames.map((game, ind) => (
             <div className="test" key={ind}>
               <h2>{game.data.data.title}</h2>
-              <img src={game.data.data.thumbnail_url} alt="" />
+              <img
+                style={{ blockSize: "150px" }}
+                src={game.data.data.thumbnail_url}
+                alt=""
+              />
+              {RegButton("Remove", "submit", () =>
+                removeGameFromLibrary(userLibraryIds[ind])
+              )}
             </div>
           ))}
-          <h3>test</h3>
         </div>
       ) : (
         <div className="mainContainer">

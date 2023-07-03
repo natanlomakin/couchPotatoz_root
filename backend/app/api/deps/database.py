@@ -348,10 +348,12 @@ library_collection = db.library
 
 async def retrive_all_librarys(userId: str):
     librarys = []
+    library_ids = []
     cursor = library_collection.find({"user_id": str(userId)})
     for document in cursor:
         librarys.append(LibraryBase(**document))
-    return librarys
+        library_ids.append(str(document["_id"]))
+    return librarys, library_ids
 
 
 async def retrive_single_library(id: str) -> LibraryBase:
@@ -383,10 +385,12 @@ game_collection = db.game
 
 async def retrive_games() -> GameBase:
     games = []
+    game_Ids = []
     cursor = game_collection.find()
     for document in cursor:
+        game_Ids.append(str(document["_id"]))
         games.append(GameBase(**document))
-    return games
+    return games, game_Ids
 
 
 async def retrive_single_game(id: str) -> GameBase:

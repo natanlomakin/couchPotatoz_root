@@ -16,8 +16,8 @@ async def get_librarys(userId: str):
             "status_code": 200,
             "response_type": "success",
             "description": f"Retrived all librarys from database",
-            "data": librarys
-        }
+            "data": librarys[0],
+            "library_ids": librarys[1]}
     return {
         "status_code": 404,
         "response_type": "error",
@@ -34,7 +34,7 @@ async def get_single_library(id: str):
             "status_code": 200,
             "response_type": "success",
             "description": f"Retrived library with id {id} from database",
-            "data": library,
+            "data": library
         }
     return {
         "status_code": 404,
@@ -55,7 +55,7 @@ async def add_library(library: LibraryBase):
     }
 
 
-@router.delete("/{id}", response_description="Removed library from database")
+@router.delete("/{id}", dependencies=[Depends(JWTBearer())], response_description="Removed library from database")
 async def remove_library(id: str):
     deleted_library = await delete_library(id)
     if deleted_library:

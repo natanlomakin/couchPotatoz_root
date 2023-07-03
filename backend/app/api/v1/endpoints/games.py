@@ -14,7 +14,8 @@ async def get_games():
             "status_code": 200,
             "response_type": "success",
             "description": f"Retrived all games from database",
-            "data": games
+            "data": games[0],
+            "gameIds": games[1]
         }
     return {
         "status_code": 404,
