@@ -1,10 +1,14 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Body
-from api.deps.database import retrive_all_massages, retrive_single_massage, create_massage, remove_massage, update_massage_data
+from datetime import datetime
+import json
+from fastapi import WebSocketDisconnect, WebSocket, APIRouter, Depends, HTTPException, status, Body
+from api.deps.database import personal_message_websocket, retrive_all_massages, retrive_single_massage, create_massage, remove_massage, update_massage_data
 from api.v1.schemas.massage import MassageBase, UpadateMassage
 from api.v1.serializers.massageSerializer import massageEntitny
 from ...deps.auth_bearer import JWTBearer
+from ..websockets.personal_messages.connection_manager import ConectionManager
 
 router = APIRouter()
+message_manager = ConectionManager()
 
 
 @router.get("/", dependencies=[Depends(JWTBearer())], response_description="retrived all massages")
@@ -74,3 +78,9 @@ async def delete_massage(id: str):
         "description": f"Massage with id {id} doesn't exist",
         "data": False
     }
+
+
+@router.websocket("/ws/{client_id}")
+async def websocket_endpoint(websocket: WebSocket, client_id: str):
+    message = await personal_message_websocket(websocket, client_id)
+    print(message)

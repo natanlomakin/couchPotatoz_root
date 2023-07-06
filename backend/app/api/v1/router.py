@@ -8,7 +8,7 @@ api_router.include_router(
     platforms.router, prefix="/platforms", tags=["platforms"])
 api_router.include_router(friends.router, prefix="/friends", tags=["friends"])
 api_router.include_router(
-    massages.router, prefix="/massages", tags=["massages"])
+    massages.router, prefix="/messages", tags=["massages"])
 api_router.include_router(
     librarys.router, prefix="/librarys", tags=["librarys"])
 api_router.include_router(

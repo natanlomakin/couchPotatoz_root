@@ -1,6 +1,7 @@
 from pymongo import mongo_client, ReturnDocument
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, WebSocket, WebSocketDisconnect
 from typing import List, Union
+from json import dumps
 from config.settings import settings
 from api.v1.schemas.user import *
 from api.v1.schemas.platform import *
@@ -25,6 +26,7 @@ from api.deps.auth import get_hashed_password, verify_password, create_access_to
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.responses import RedirectResponse
 from fastapi import FastAPI, status, HTTPException, Depends
+from ..v1.websockets.personal_messages.connection_manager import ConectionManager
 
 client = mongo_client.MongoClient(settings.DATABASE_URL)
 db = client.potato
@@ -213,6 +215,27 @@ async def remove_massage(id: str) -> bool:
         massage_collection.delete_one({'_id': ObjectId(str(id))})
         return True
     return False
+
+
+message_manager = ConectionManager()
+
+
+async def personal_message_websocket(websocket: WebSocket, client_id: str):
+    await message_manager.connect(websocket)
+    print(websocket.query_params)
+    now = datetime.now()
+    current_time = now.strftime("%H:%M")
+    try:
+        while True:
+            data = await websocket.receive_text()
+            message = {"time": current_time,
+                       "clientId": client_id, "message": data}
+            await message_manager.broadcast(dumps(message))
+
+    except WebSocketDisconnect:
+        message_manager.disconect(websocket)
+        message = {"time": current_time,
+                   "clientId": client_id, "message": "offline"}
 #############################################
 group_collection = db.group
 
