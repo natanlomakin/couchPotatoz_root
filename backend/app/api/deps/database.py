@@ -2,6 +2,7 @@ from pymongo import mongo_client, ReturnDocument
 from fastapi import HTTPException, status, WebSocket, WebSocketDisconnect
 from typing import List, Union
 from json import dumps
+import random
 from config.settings import settings
 from api.v1.schemas.user import *
 from api.v1.schemas.platform import *
@@ -12,6 +13,7 @@ from api.v1.schemas.group import *
 from api.v1.schemas.game import *
 from api.v1.schemas.group_member import *
 from api.v1.schemas.group_massage import *
+from api.v1.schemas.private_chat import *
 from api.v1.serializers.userSerializer import userFriendEntity, userEntitny, listUserEntity, userUpdatedEntity, signupUserEntity
 from api.v1.serializers.platformSerializer import platformEntitny
 from api.v1.serializers.friendSerializer import friendEntitny, updateFriendEntity
@@ -21,6 +23,7 @@ from api.v1.serializers.groupSerializer import groupEntitny, updateGroupEntity
 from api.v1.serializers.gameSerializer import gameEntitny, UpdateGameEntity
 from api.v1.serializers.group_memberSerializer import group_memberEntitny, updateGroup_memberEntity
 from api.v1.serializers.group_massageSerializer import group_massageEntitny
+from api.v1.serializers.privateChatSerializer import privateChatEntitny
 from bson.objectid import ObjectId
 from api.deps.auth import get_hashed_password, verify_password, create_access_token, create_refresh_token
 from fastapi.security import OAuth2PasswordRequestForm
@@ -175,24 +178,46 @@ async def remove_friendship(id: str) -> bool:
 massage_collection = db.massage
 
 
-async def retrive_all_massages():
-    massages = []
+""" async def retrive_all_massages():
+    messages = []
     cursor = massage_collection.find()
     for document in cursor:
-        massages.append(MassageBase(**document))
-    return massages
+        messages.append(MassageBase(**document))
+    return messages """
+
+
+def sort_by_createdAt(obj):
+    return obj.createdAt
+
+
+async def retrive_user_messages(source_id: str, target_id: str):
+    messages_source = []
+    messages_target = []
+    messages = []
+    cursor_source = massage_collection.find(
+        {"source_id": str(source_id), "target_id": str(target_id)})
+    cursor_target = massage_collection.find(
+        {"target_id": str(source_id), "source_id": str(target_id)})
+    for document in cursor_source:
+        messages_source.append(MassageBase(**document))
+    for document in cursor_target:
+        messages_target.append(MassageBase(**document))
+    messages = messages_source + messages_target
+    sorted_messages = sorted(messages, key=sort_by_createdAt)
+    return sorted_messages
 
 
 async def retrive_single_massage(id: str):
-    massage = massage_collection.find_one({"_id": ObjectId(str(id))})
-    if massage:
-        massage = massageEntitny(massage)
-        return massage
+    message = massage_collection.find_one({"_id": ObjectId(str(id))})
+    if message:
+        message = massageEntitny(message)
+        return message
     return HTTPException(status_code=404, detail="Massage not found")
 
 
 async def create_massage(new_massage: MassageBase) -> MassageBase:
     new_massage.createdAt = datetime.utcnow()
+    print(new_massage)
     _id = massage_collection.insert_one(dict(new_massage))
     massage = massage_collection.find_one(
         {"_id": ObjectId(str(_id.inserted_id))})
@@ -220,22 +245,76 @@ async def remove_massage(id: str) -> bool:
 message_manager = ConectionManager()
 
 
-async def personal_message_websocket(websocket: WebSocket, client_id: str):
+async def personal_message_websocket(websocket: WebSocket):
     await message_manager.connect(websocket)
-    print(websocket.query_params)
+    try:
+        while True:
+            data = await websocket.receive_text()
+            await message_manager.broadcast(dumps(data))
+
+    except WebSocketDisconnect:
+        message_manager.disconect(websocket)
+        """ await message_manager.broadcast("left the chat") """
+
+#############################################
+private_chat_collection = db.private_chat
+
+
+async def retrive_single_private_chat(user1: str, user2: str):
+    chat = private_chat_collection.find_one(
+        {'user1': str(user1), 'user2': str(user2)})
+    if chat:
+        print(chat)
+        chat = privateChatEntitny(chat)
+        return chat
+    chat = private_chat_collection.find_one(
+        {'user1': str(user2), 'user2': str(user1)})
+    if chat:
+        print(chat)
+        chat = privateChatEntitny(chat)
+        return chat
+    return HTTPException(status_code=404, detail="chat not found")
+
+
+async def create_private_chat(new_chat: PrivateChatBase) -> PrivateChatBase:
+    new_chat.createdAt = datetime.utcnow()
+    new_chat.chatId = str(random.randrange(1000, 9999))
+    _id = private_chat_collection.insert_one(dict(new_chat))
+    chat = private_chat_collection.find_one(
+        {"_id": ObjectId(str(_id.inserted_id))})
+    chat = privateChatEntitny(chat)
+    return chat
+
+
+async def delete_private_chat(user1: str, user2: str):
+    chat = private_chat_collection.find_one(
+        {'user1': str(user1), 'user2': str(user2)})
+    if chat:
+        private_chat_collection.delete_one({"_id": ObjectId(str(chat['_id']))})
+        return True
+    chat = private_chat_collection.find_one(
+        {'user1': str(user2), 'user2': str(user1)})
+    if chat:
+        private_chat_collection.delete_one({"_id": ObjectId(str(chat['_id']))})
+        return True
+    return False
+
+""" async def personal_message_websocket(websocket: WebSocket, source_id: str, target_id: str):
+    await message_manager.connect(websocket)
     now = datetime.now()
     current_time = now.strftime("%H:%M")
     try:
         while True:
             data = await websocket.receive_text()
-            message = {"time": current_time,
-                       "clientId": client_id, "message": data}
-            await message_manager.broadcast(dumps(message))
+            newMessage = await create_massage({"source_id": source_id,
+                                               "target_id": target_id, "massage_content": data, "createdAt": now})
+            await message_manager.broadcast(dumps(data))
 
     except WebSocketDisconnect:
         message_manager.disconect(websocket)
         message = {"time": current_time,
-                   "clientId": client_id, "message": "offline"}
+                   "clientId": source_id, "message": "offline"} """
+
 #############################################
 group_collection = db.group
 

@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from api.v1.endpoints import users, platforms, friends, massages, librarys, groups, games, group_members, group_massages
+from api.v1.endpoints import users, platforms, friends, massages, librarys, groups, games, group_members, group_massages, private_chat
 
 api_router = APIRouter()
 
@@ -19,3 +19,5 @@ api_router.include_router(
     group_members.router, prefix="/group/members", tags=["group_members"])
 api_router.include_router(
     group_massages.router, prefix="/group/massages", tags=["group_massages"])
+api_router.include_router(
+    private_chat.router, prefix="/chat/private", tags=["private_chat"])
