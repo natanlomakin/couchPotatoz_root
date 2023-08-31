@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from api.deps.database import retrive_all_groups, retrive_single_group, create_group, update_group_data, remove_group
+from api.deps.database import retrive_searched_group, retrive_all_groups, retrive_single_group, create_group, update_group_data, remove_group
 from api.v1.schemas.group import GroupBase, UpadateGroupBase
 from api.v1.serializers.groupSerializer import groupEntitny
 
@@ -15,7 +15,7 @@ async def get_groups():
             "response_type": "success",
             "description": f"Retrived all groups from database",
             "data": groups[0],
-            "library_ids": groups[1]
+            "groups_ids": groups[1]
         }
     return {
         "status_code": 404,
@@ -34,6 +34,25 @@ async def get_group(id: str):
             "response_type": "success",
             "description": f"Retrived group with id {id} from database",
             "data": group
+        }
+    return {
+        "status_code": 404,
+        "response_type": "error",
+        "description": f"There is no group with id {id}",
+        "data": False
+    }
+
+
+@router.get("/search/{searchValue}", response_description="Retrived single group data by search value")
+async def get_group_by_search(searchValue: str):
+    groups = await retrive_searched_group(searchValue)
+    if groups:
+        return {
+            "status_code": 200,
+            "response_type": "success",
+            "description": f"Retrived group with id {id} from database",
+            "data": groups[0],
+            "groups_ids": groups[1]
         }
     return {
         "status_code": 404,

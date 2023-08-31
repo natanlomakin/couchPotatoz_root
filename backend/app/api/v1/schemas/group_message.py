@@ -4,8 +4,9 @@ from typing import List
 from bson.objectid import ObjectId
 
 
-class GroupMassageBase(BaseModel):
+class GroupMessageBase(BaseModel):
     group_id: str
+    user_name: str
     user_id: str
     massage_content: str
     createdAt: datetime | None = None
@@ -17,5 +18,5 @@ class GroupMassageBase(BaseModel):
         json_encoders = {ObjectId: str}
 
 
-class ListGroupMassages(BaseModel):
-    result: List[GroupMassageBase]
+class ListGroupMessages(BaseModel):
+    result: List[GroupMessageBase]

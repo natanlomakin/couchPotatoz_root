@@ -9,6 +9,7 @@ class GroupBase(BaseModel):
     title: str
     summery: str
     createdBy_id: str
+    chatId: str
     status: str
     createdAt: datetime | None = None
 

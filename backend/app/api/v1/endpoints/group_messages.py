@@ -1,9 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from api.deps.database import retrive_group_masseges, retrive_single_group_massage, create_group_massage, delete_group_massage_data
-from api.v1.schemas.group_massage import GroupMassageBase
+from fastapi import APIRouter, WebSocket, Depends, HTTPException, status
+from api.deps.database import group_message_websocket, retrive_group_masseges, retrive_single_group_massage, create_group_massage, delete_group_massage_data
+from api.v1.schemas.group_message import GroupMessageBase
 from api.v1.serializers.group_massageSerializer import group_massageEntitny
+from ..websockets.group_messages.connection_manager import ConectionManager
 
 router = APIRouter()
+message_manager = ConectionManager()
 
 
 @router.get("/{groupId}", response_description="Retrive all the massages in the group")
@@ -43,7 +45,7 @@ async def get_single_groupe_massage(groupId: str, userId: str):
 
 
 @router.post("/", response_description="Added new group massage to the database")
-async def add_new_massage(massage: GroupMassageBase):
+async def add_new_massage(massage: GroupMessageBase):
     new_group_massage = await create_group_massage(massage)
     if new_group_massage:
         return {
@@ -76,3 +78,9 @@ async def delete_group_massage(massageId: str):
         "description": f"Massage with id {massageId} doesn't exist",
         "data": False
     }
+
+
+@router.websocket("/ws/{chatId}")
+async def websocket_endpoint(websocket: WebSocket):
+    message = await group_message_websocket(websocket)
+    print(message)

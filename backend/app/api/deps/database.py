@@ -12,7 +12,7 @@ from api.v1.schemas.library import *
 from api.v1.schemas.group import *
 from api.v1.schemas.game import *
 from api.v1.schemas.group_member import *
-from api.v1.schemas.group_massage import *
+from api.v1.schemas.group_message import *
 from api.v1.schemas.private_chat import *
 from api.v1.serializers.userSerializer import userFriendEntity, userEntitny, listUserEntity, userUpdatedEntity, signupUserEntity
 from api.v1.serializers.platformSerializer import platformEntitny
@@ -29,7 +29,9 @@ from api.deps.auth import get_hashed_password, verify_password, create_access_to
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.responses import RedirectResponse
 from fastapi import FastAPI, status, HTTPException, Depends
-from ..v1.websockets.personal_messages.connection_manager import ConectionManager
+from ..v1.websockets.personal_messages.connection_manager import ConectionManager as PersonalConectionManager
+from ..v1.websockets.group_messages.connection_manager import ConectionManager as GroupConectionManager
+import re
 
 client = mongo_client.MongoClient(settings.DATABASE_URL)
 db = client.potato
@@ -242,18 +244,18 @@ async def remove_massage(id: str) -> bool:
     return False
 
 
-message_manager = ConectionManager()
+personal_message_manager = PersonalConectionManager()
 
 
 async def personal_message_websocket(websocket: WebSocket):
-    await message_manager.connect(websocket)
+    await personal_message_manager.connect(websocket)
     try:
         while True:
             data = await websocket.receive_text()
-            await message_manager.broadcast(dumps(data))
+            await personal_message_manager.broadcast(dumps(data))
 
     except WebSocketDisconnect:
-        message_manager.disconect(websocket)
+        personal_message_manager.disconect(websocket)
         """ await message_manager.broadcast("left the chat") """
 
 #############################################
@@ -337,6 +339,29 @@ async def retrive_single_group(id: str) -> GroupBase:
     return False
 
 
+async def retrive_searched_group(searchValue: str):
+    groups = []
+    groupIds = []
+    cursor = group_collection.find(
+        {"title": {"$regex": searchValue, "$options": "i"}})
+    print(cursor.retrieved)
+    for document in cursor:
+
+        groupIds.append(str(document["_id"]))
+        print(groupIds)
+        groups.append(GroupBase(**document))
+    return groups, groupIds
+
+""" async def retrive_searched_group(searchValue: str) -> GroupBase:
+    print(searchValue)
+    group = group_collection.find_one({"title": str(searchValue)})
+    print(group)
+    if group:
+        group = groupEntitny(group)
+        return group
+    return False """
+
+
 async def create_group(group: GroupBase) -> GroupBase:
     group.createdAt = datetime.utcnow()
     _id = group_collection.insert_one(dict(group))
@@ -365,26 +390,27 @@ async def remove_group(id: str):
 
 #############################################
 group_massage_collection = db.group_massage
+group_message_manager = GroupConectionManager()
 
 
-async def retrive_group_masseges(id: str) -> GroupMassageBase:
+async def retrive_group_masseges(id: str) -> GroupMessageBase:
     group_massages = []
     cursor = group_massage_collection.find({"group_id": str(id)})
     for document in cursor:
-        group_massages.append(GroupMassageBase(**document))
+        group_massages.append(GroupMessageBase(**document))
     return group_massages
 
 
-async def retrive_single_group_massage(groupId: str, userId: str) -> GroupMassageBase:
+async def retrive_single_group_massage(groupId: str, userId: str) -> GroupMessageBase:
     group_massage = []
     cursor = group_massage_collection.find({"group_id": str(groupId)})
     for document in cursor:
         if document["user_id"] == str(userId):
-            group_massage.append(GroupMassageBase(**document))
+            group_massage.append(GroupMessageBase(**document))
     return group_massage
 
 
-async def create_group_massage(massage: GroupMassageBase) -> GroupMassageBase:
+async def create_group_massage(massage: GroupMessageBase) -> GroupMessageBase:
     massage.createdAt = datetime.utcnow()
     _id = group_massage_collection.insert_one(dict(massage))
     new_massage = group_massage_collection.find_one(
@@ -399,6 +425,18 @@ async def delete_group_massage_data(groupId: str):
     if deleted_group_massage:
         return True
     return False
+
+
+async def group_message_websocket(websocket: WebSocket):
+    await group_message_manager.connect(websocket)
+    try:
+        while True:
+            data = await websocket.receive_text()
+            print(data)
+            await group_message_manager.broadcast(dumps(data))
+
+    except WebSocketDisconnect:
+        group_message_manager.disconect(websocket)
 #############################################
 group_member_collection = db.group_member
 
