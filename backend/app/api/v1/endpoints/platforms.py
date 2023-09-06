@@ -1,7 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Body
-from api.deps.database import get_platforms, get_platform, create_platform, remove_platform
+from fastapi import APIRouter
+from api.v1.models.platforms import get_platforms, get_platform, create_platform, remove_platform
 from api.v1.schemas.platform import PlatformBase
-from api.v1.serializers.platformSerializer import platformEntitny
 
 router = APIRouter()
 

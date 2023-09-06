@@ -1,5 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Body
-from api.deps.database import retrive_users, retrive_single_user_friend, add_new_user, retrive_single_user, remove_user, update_user_data, login_user
+from fastapi import APIRouter, Depends
+from api.v1.models.users import retrive_users, retrive_single_user_friend, add_new_user, retrive_single_user, remove_user, update_user_data, login_user
 from api.v1.schemas.user import UserBase, CreateUser, User, LoginUser, ListUser, CreateUser, UpdateUser
 from api.v1.serializers.userSerializer import listUserEntity
 from ...deps.auth_bearer import JWTBearer

@@ -1,7 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from api.deps.database import retrive_searched_group, retrive_all_groups, retrive_single_group, create_group, update_group_data, remove_group
+from fastapi import APIRouter
+from api.v1.models.groups import retrive_searched_group, retrive_all_groups, retrive_single_group, create_group, update_group_data, remove_group
 from api.v1.schemas.group import GroupBase, UpadateGroupBase
-from api.v1.serializers.groupSerializer import groupEntitny
 
 router = APIRouter()
 

@@ -1,7 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from api.deps.database import retrive_all_friends, retrive_friend, create_friend, update_friend_data, remove_friendship
+from fastapi import APIRouter, Depends
+from api.v1.models.friends import retrive_all_friends, retrive_friend, create_friend, update_friend_data, remove_friendship
 from api.v1.schemas.friend import FriendBase, UpdateFriend, CreateFriend
-from api.v1.serializers.friendSerializer import friendEntitny
 from ...deps.auth_bearer import JWTBearer
 
 router = APIRouter()

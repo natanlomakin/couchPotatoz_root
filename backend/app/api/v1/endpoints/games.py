@@ -1,7 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from api.deps.database import retrive_games, retrive_single_game, create_game, update_game_data, remove_game
+from fastapi import APIRouter
+from api.v1.models.games import retrive_games, retrive_single_game, create_game, update_game_data, remove_game
 from api.v1.schemas.game import GameBase, UpdateGameBase
-from api.v1.serializers.gameSerializer import gameEntitny
 
 router = APIRouter()
 

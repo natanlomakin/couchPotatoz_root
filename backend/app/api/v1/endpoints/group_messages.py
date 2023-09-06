@@ -1,11 +1,8 @@
-from fastapi import APIRouter, WebSocket, Depends, HTTPException, status
-from api.deps.database import group_message_websocket, retrive_group_masseges, retrive_single_group_massage, create_group_massage, delete_group_massage_data
+from fastapi import APIRouter, WebSocket
+from api.v1.models.group_messages import group_message_websocket, retrive_group_masseges, retrive_single_group_massage, create_group_massage, delete_group_massage_data
 from api.v1.schemas.group_message import GroupMessageBase
-from api.v1.serializers.group_massageSerializer import group_massageEntitny
-from ..websockets.group_messages.connection_manager import ConectionManager
 
 router = APIRouter()
-message_manager = ConectionManager()
 
 
 @router.get("/{groupId}", response_description="Retrive all the massages in the group")

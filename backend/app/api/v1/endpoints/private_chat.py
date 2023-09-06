@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Body
-from api.deps.database import create_private_chat, delete_private_chat, retrive_single_private_chat
+from api.v1.models.private_chat import create_private_chat, delete_private_chat, retrive_single_private_chat
 from api.v1.schemas.private_chat import PrivateChatBase
 from ...deps.auth_bearer import JWTBearer
 

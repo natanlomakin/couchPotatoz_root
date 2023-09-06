@@ -1,7 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from api.deps.database import retrive_group_members, retrive_single_group_member, create_group_member, update_group_member_data, delete_group_member_data
+from fastapi import APIRouter
+from api.v1.models.group_members import retrive_group_members, retrive_single_group_member, create_group_member, update_group_member_data, delete_group_member_data
 from api.v1.schemas.group_member import GroupMemberBase, UpdateGroupMemberBase
-from api.v1.serializers.group_memberSerializer import group_memberEntitny, updateGroup_memberEntity
 
 router = APIRouter()
 

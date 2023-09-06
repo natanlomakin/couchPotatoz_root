@@ -1,5 +1,5 @@
 from fastapi import WebSocketDisconnect, WebSocket, APIRouter, Depends, HTTPException, status, Body
-from api.deps.database import retrive_user_messages, personal_message_websocket, retrive_single_massage, create_massage, remove_massage, update_massage_data
+from api.v1.models.messages import retrive_user_messages, personal_message_websocket, retrive_single_massage, create_massage, remove_massage, update_massage_data
 from api.v1.schemas.massage import MassageBase, UpadateMassage
 from ...deps.auth_bearer import JWTBearer
 from ..websockets.personal_messages.connection_manager import ConectionManager
@@ -75,6 +75,7 @@ async def delete_massage(id: str):
         "description": f"Massage with id {id} doesn't exist",
         "data": False
     }
+
 
 @router.websocket("/ws/{chatId}")
 async def websocket_endpoint(websocket: WebSocket):
