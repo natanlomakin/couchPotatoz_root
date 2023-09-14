@@ -247,9 +247,8 @@ const SingleGroup = () => {
 
       <div
         className="offcanvas offcanvas-end"
-        tabindex="-1"
+        tabIndex="-1"
         data-bs-backdrop="static"
-        /* id="staticBackdrop" */
         id="offcanvasRight"
         aria-labelledby="offcanvasRightLabel"
       >

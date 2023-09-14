@@ -5,6 +5,7 @@ import axios from "axios";
 import { SERVER_URL, WS_SERVER_URL } from "../utils/serverUtil";
 import { getCookie } from "../utils/cookieUtil";
 import { parseJwt } from "../utils/tokenDecodeUtil";
+import "../static/css/friends.css";
 
 const Friends = () => {
   const [userFriendsList, setUserFriendsList] = useState([]);
@@ -19,6 +20,7 @@ const Friends = () => {
   const [isMessageSent, setIsMessageSent] = useState(false);
   const [lastSentMessage, setLastSentMessage] = useState([]);
   const [privateChatId, setPrivateChatId] = useState("");
+  const [accordionState, setAccordionState] = useState("accordion");
 
   const { sendMessage, lastMessage } = useWebSocket(
     WS_SERVER_URL + "/messages/ws/" + privateChatId
@@ -161,25 +163,29 @@ const Friends = () => {
   };
 
   return (
-    <div>
+    <div className="friends-container">
       <button
-        className="btn btn-primary"
+        className="display-friends"
         type="button"
         data-bs-toggle="collapse"
         data-bs-target="#collapseExample"
         aria-expanded="false"
         aria-controls="collapseExample"
+        onClick={() => {
+          accordionState === "accordion"
+            ? setAccordionState("accordion-active")
+            : setAccordionState("accordion");
+        }}
       >
         Friends
       </button>
-      <div className="collapse" id="collapseExample">
+      <div className={accordionState} /* id="collapseExample" */>
         {userFriendsData.map((friend, ind) => (
-          <div className="card card-body" key={ind}>
-            <h4>{friend.data.data.userName}</h4>
-            {friend.data.data.id}
+          <div className="friend-card" key={ind}>
+            <h4 className="friend-name">{friend.data.data.userName}</h4>
             <div>
               <button
-                className="btn btn-primary"
+                className="send-message-button"
                 type="button"
                 data-bs-toggle="offcanvas"
                 data-bs-target="#offcanvasBottom"
@@ -191,7 +197,6 @@ const Friends = () => {
                   setLastSentMessage([]);
                   userMessageHistory(userId, friend.data.data.id);
                   handleGetPrivateChatId(friend.data.data.id);
-                  /* handleCreatePrivateCHat(); */
                 }}
               >
                 Send message
@@ -202,7 +207,7 @@ const Friends = () => {
       </div>
       <div
         className="offcanvas offcanvas-bottom"
-        tabindex="-1"
+        tabIndex="-1"
         id="offcanvasBottom"
         data-bs-backdrop="static"
         aria-labelledby="offcanvasBottomLabel"
@@ -222,7 +227,7 @@ const Friends = () => {
         <div className="offcanvas-body small">
           <div className="messageHistory">
             {messageHistory.map((singleMessageHistory, ind) => (
-              <div key={ind}>
+              <div className="single-friend-card" key={ind}>
                 <ul>
                   {singleMessageHistory.source_id == userId ? (
                     <li style={{ color: "red" }}>

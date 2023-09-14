@@ -1,0 +1,16 @@
+.regular-button {
+  display: inline;
+  text-decoration: none;
+  color: #bd00ff;
+  background-color: #5d5775f6;
+  border-radius: 1rem;
+  padding: 0.5rem 0.5rem;
+  margin: 1rem;
+  border: none;
+  transition: 0.4s ease;
+}
+
+.regular-button:hover {
+  color: #8c00ff;
+  background-color: rgba(93, 87, 117, 0.8);
+}

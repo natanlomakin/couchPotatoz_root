@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { SERVER_URL } from "../utils/serverUtil";
 import LinkButton from "../components/LinkButton";
+import "../static/css/groups.css";
 
 const Groups = () => {
   const [groups, setGroups] = useState([]);
@@ -35,27 +36,36 @@ const Groups = () => {
     <div>
       <div className="mainContainer">
         <div className="group-search">
-          <h3>
-            Search:{" "}
-            <input
-              type="text"
-              placeholder="Group title"
-              autoComplete={"false"}
-              onChange={(e) => {
-                setGroupSearchValue(e.target.value);
-              }}
-            ></input>
-          </h3>
+          <input
+            id="group-search"
+            className="group-search-input"
+            type="text"
+            placeholder="Group title"
+            autoComplete={"false"}
+            onChange={(e) => {
+              setGroupSearchValue(e.target.value);
+            }}
+          ></input>
+          <label className="input-label" for="group-search">
+            Search{" "}
+          </label>
         </div>
-        <h1>Groups</h1>
+        <h1 className="main-title">Groups</h1>
         <div className="groups-view">
           {groups ? (
             groups.map((group, ind) => (
               <div className="single-group" key={ind}>
-                {console.log(group[ind])}
-                <h2>{group.title}</h2>
-                <p>{group.summery}</p>
-                {LinkButton("Visit", groupIds[ind])}
+                <div>
+                  <img className="group-image"
+                    src="https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM="
+                    alt=""
+                  />
+                </div>
+                <div className="card-content">
+                  <h2>{group.title}</h2>
+                  <p>{group.summery}</p>
+                  {LinkButton("Visit", groupIds[ind])}
+                </div>
               </div>
             ))
           ) : (
