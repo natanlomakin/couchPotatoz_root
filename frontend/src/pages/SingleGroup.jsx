@@ -25,13 +25,10 @@ const SingleGroup = () => {
   );
 
   useEffect(() => {
-    setUserId(parseJwt(getCookie("access_token")).sub);
+    getCookie("access_token") ? setUserId(parseJwt(getCookie("access_token")).sub) : null;
     if (lastMessage !== null) {
-      console.log(lastMessage);
       const parsedMessage = JSON.parse(JSON.parse(lastMessage.data));
-      console.log("parsed message", parsedMessage);
       setLastSentMessage((prev) => prev.concat(parsedMessage));
-      console.log(lastSentMessage);
     }
   }, [lastMessage, setLastSentMessage]);
 
@@ -203,7 +200,7 @@ const SingleGroup = () => {
         <div>
           <div>
             <button
-              class="btn btn-danger"
+              className="btn btn-danger"
               type="button"
               onClick={removeUserFromGroup}
             >
@@ -212,7 +209,7 @@ const SingleGroup = () => {
           </div>
           <div>
             <button
-              class="btn btn-primary"
+              className="btn btn-primary"
               type="button"
               data-bs-toggle="offcanvas"
               data-bs-target="#offcanvasRight"
@@ -227,7 +224,7 @@ const SingleGroup = () => {
       ) : (
         <div>
           <button
-            class="btn btn-primary"
+            className="btn btn-primary"
             type="button"
             data-bs-toggle="offcanvas"
             data-bs-target="#offcanvasRight"
@@ -239,9 +236,19 @@ const SingleGroup = () => {
           <br></br>
           <span>Please enter the group to send messages.</span>
           <br></br>
-          <button class="btn btn-info" type="button" onClick={addUserToGroup}>
+          <button
+            className="btn btn-info"
+            type="button"
+            onClick={addUserToGroup}
+            disabled = {userId ? false : true} 
+          >
             Enter group
           </button>
+          {userId ? null : (
+            <div>
+              <span>Log in to enter group.</span>
+            </div>
+          )}
         </div>
       )}
 

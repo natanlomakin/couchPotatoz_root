@@ -1,3 +1,4 @@
+from pymongo import ReturnDocument
 from api.v1.schemas.user import *
 from api.deps.database import user_collection
 from api.v1.serializers.userSerializer import userFriendEntity, userEntitny, userUpdatedEntity, signupUserEntity
@@ -48,6 +49,7 @@ async def login_user(form_data: OAuth2PasswordRequestForm = Depends()):
                         detail="incorrect email or password")
     tokens = {"access_token": create_access_token(
         str(user['_id'])), "refresh_token": create_refresh_token(str(user['_id']))}
+    print(tokens)
     return tokens
 
 

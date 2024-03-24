@@ -4,6 +4,7 @@ import LinkButton from "./LinkButton";
 import RegButton from "./RegButton";
 import { removeCookie } from "../utils/cookieUtil";
 import logo from "../assets/react.svg";
+import { SERVER_URL } from "../utils/serverUtil";
 
 const Header = () => {
   const [hamburgerCssClass, setHamburgerCssClass] = useState("hamburger");
@@ -104,7 +105,7 @@ const Header = () => {
             {RegButton("Sign out", "submit", () => {
               removeCookie("access_token");
               removeCookie("refresh_token");
-              window.location.reload();
+              window.location.replace("http://localhost:5173/login");
             })}
           </li>
         </ul>

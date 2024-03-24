@@ -6,7 +6,8 @@ def groupEntitny(group) -> dict:
         "title": group["title"],
         "chatId": group["chatId"],
         "status": group["status"],
-        "summery": group["summery"]
+        "summery": group["summery"],
+        "mainImage": group["mainImage"]
     }
 
 
@@ -15,7 +16,13 @@ def updateGroupEntity(group) -> dict:
         "id": str(group["_id"]),
         "title": group["title"],
         "status": group["status"],
-        "summery": group["summery"]
+        "summery": group["summery"],
+        "mainImage": group["mainImage"]
+    }
+
+def returnGroupIdEntity(group) -> dict:
+    return {
+        "id": str(group["_id"]),
     }
 
 

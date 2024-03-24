@@ -20,6 +20,15 @@ const Library = () => {
 
   useEffect(() => {
     setIsLibraryUpdated(false);
+
+    if (getCookie("access_token")) {
+      setUserId(parseJwt(getCookie("access_token")).sub);
+      
+      setIsUserLoggedIn(true);
+    } else {
+      setIsUserLoggedIn(false);
+    }
+
     const server_data = async () => {
       const response = await axios(SERVER_URL + "/librarys/" + userId, {
         headers: {
@@ -31,13 +40,7 @@ const Library = () => {
       setuserLibrarys(response.data.data);
       setUserLibraryIds(response.data.library_ids);
     };
-    if (getCookie("access_token")) {
-      setUserId(parseJwt(getCookie("access_token")).sub);
-      server_data();
-      setIsUserLoggedIn(true);
-    } else {
-      setIsUserLoggedIn(false);
-    }
+    server_data();
   }, [isLibraryUpdated, isUserLoggedIn]);
 
   useEffect(() => {

@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     CLIENT_ORIGIN: str | None
 
     class Config:
-        env_file = '../.env'
+        env_file = '.env'
 
 
 settings = Settings()

@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from api.v1.models.groups import retrive_searched_group, retrive_all_groups, retrive_single_group, create_group, update_group_data, remove_group
+from api.v1.models.groups import retrive_searched_group, retrive_all_groups, retrive_all_groups_chat_ids, retrive_single_group, create_group, update_group_data, remove_group
 from api.v1.schemas.group import GroupBase, UpadateGroupBase
 
 router = APIRouter()
@@ -60,6 +60,23 @@ async def get_group_by_search(searchValue: str):
         "data": False
     }
 
+@router.get("/chat/ids", response_description="Retrive all groups chat ids")
+async def get_groups_chat_ids():
+    groupsChatIds = await retrive_all_groups_chat_ids()
+    if groupsChatIds:
+        return {
+            "status_code": 200,
+            "response_type": "success",
+            "description": f"Retrived all groups from database",
+            "data": groupsChatIds,
+            
+        }
+    return {
+        "status_code": 404,
+        "response_type": "error",
+        "description": f"There are no groups",
+        "data": False
+    }
 
 @router.post("/", response_description="Addede new group data to database")
 async def add_group(group: GroupBase):

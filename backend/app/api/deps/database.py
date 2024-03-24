@@ -1,7 +1,7 @@
 from pymongo import mongo_client
 from config.settings import settings
 
-client = mongo_client.MongoClient(settings.DATABASE_URL)
+client = mongo_client.MongoClient("mongodb+srv://natanlom:xw28iDJ8V2OoAuGQ@couchpotatoz.nh3lws8.mongodb.net/?retryWrites=true&w=majority")
 db = client.potato
 
 user_collection = db.user
