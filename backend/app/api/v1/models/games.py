@@ -21,6 +21,15 @@ async def retrive_single_game(id: str) -> GameBase:
         return game
     return False
 
+async def retrive_searched_game(searchValue: str):
+    games = []
+    cursor = game_collection.find(
+        {"title": {"$regex": searchValue, "$options": "i"}})
+    print(cursor.retrieved)
+    for document in cursor:
+        games.append(GameBase(**document))
+    return games
+
 
 async def create_game(game: GameBase) -> GameBase:
     game.createdAt = datetime.utcnow()

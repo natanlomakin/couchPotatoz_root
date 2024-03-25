@@ -36,7 +36,6 @@ async def retrive_searched_group(searchValue: str):
         {"title": {"$regex": searchValue, "$options": "i"}})
     print(cursor.retrieved)
     for document in cursor:
-
         groupIds.append(str(document["_id"]))
         print(groupIds)
         groups.append(GroupBase(**document))

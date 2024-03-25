@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from api.v1.models.games import retrive_games, retrive_single_game, create_game, update_game_data, remove_game
+from api.v1.models.games import retrive_games, retrive_single_game, retrive_searched_game, create_game, update_game_data, remove_game
 from api.v1.schemas.game import GameBase, UpdateGameBase
 
 router = APIRouter()
@@ -41,6 +41,22 @@ async def get_game(id: str):
         "data": False
     }
 
+@router.get("/search/{searchValue}", response_description="Retrived single game data by search value")
+async def get_game_by_search(searchValue: str):
+    games = await retrive_searched_game(searchValue)
+    if games:
+        return {
+            "status_code": 200,
+            "response_type": "success",
+            "description": f"Retrived group with id {id} from database",
+            "data": games,
+        }
+    return {
+        "status_code": 404,
+        "response_type": "error",
+        "description": f"There is no group with id {id}",
+        "data": False
+    }
 
 @router.post("/", response_description="Added new game data to the database")
 async def add_game(game: GameBase):
