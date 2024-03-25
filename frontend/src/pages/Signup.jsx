@@ -15,14 +15,16 @@ const Signup = () => {
 
   const signupHandle = async (e) => {
     e.preventDefault();
-    const response = await axios.post(SERVER_URL + "/users/signup", {
-      email: email,
-      password: password,
-      firstName: firstName,
-      lastName: lastName,
-      userName: userName,
-      profile_image_url: profileImage,
-    });
+    const response = await axios
+      .post(SERVER_URL + "/users/signup", {
+        email: email,
+        password: password,
+        firstName: firstName,
+        lastName: lastName,
+        userName: userName,
+        profile_image_url: profileImage,
+      })
+      .then(window.location.replace("http://localhost:5173/login"));
   };
   return (
     <div>

@@ -19,13 +19,16 @@ const SingleGroup = () => {
   const [userId, setUserId] = useState("");
   const [groupChatHistory, setGroupChatHistory] = useState([]);
   const [userName, setUserName] = useState("");
+  const [userRole, setUserRole] = useState("");
 
   const { sendMessage, lastMessage, sendJsonMessage } = useWebSocket(
     WS_SERVER_URL + "/group/messages/ws/" + groupChatId
   );
 
   useEffect(() => {
-    getCookie("access_token") ? setUserId(parseJwt(getCookie("access_token")).sub) : null;
+    getCookie("access_token")
+      ? setUserId(parseJwt(getCookie("access_token")).sub)
+      : null;
     if (lastMessage !== null) {
       const parsedMessage = JSON.parse(JSON.parse(lastMessage.data));
       setLastSentMessage((prev) => prev.concat(parsedMessage));
@@ -177,6 +180,26 @@ const SingleGroup = () => {
     setIsGroupUpdated(true);
   };
 
+  const deleteGroupHandle = async () => {
+    const response = await axios
+      .delete(SERVER_URL + "/groups/" + libraryId, {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      })
+      .then(window.location.replace("http://localhost:5173/groups"));
+  };
+
+  const deleteGroupMember = async (memberId) => {
+    const response = await axios.delete(
+      SERVER_URL + "/group/members/" + libraryId + "/" + memberId + "/",
+      {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      }
+    );
+    setIsGroupUpdated(true);
+  };
+
   return (
     <div>
       <div className="mainContainer">
@@ -190,6 +213,19 @@ const SingleGroup = () => {
           {groupMembersData.map((member, ind) => (
             <div key={ind}>
               <h3>{member.userName}</h3>
+              {userId === groupCreator.id && userId != member.id ? (
+                <button
+                  className="btn btn-warning"
+                  type="button"
+                  data-bs-toggle="offcanvas"
+                  data-bs-target="#offcanvasRight"
+                  aria-controls="offcanvasRight"
+                  /* data-bs-target="#staticBackdrop" */
+                  onClick={() => deleteGroupMember(member.id)}
+                >
+                  Remove user
+                </button>
+              ) : null}
             </div>
           ))}
         </div>
@@ -220,6 +256,21 @@ const SingleGroup = () => {
               Send Group Message
             </button>
           </div>
+          {userId === groupCreator.id ? (
+            <div className="adminDeleteGroupBtn">
+              <button
+                className="btn btn-primary"
+                type="button"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasRight"
+                aria-controls="offcanvasRight"
+                /* data-bs-target="#staticBackdrop" */
+                onClick={deleteGroupHandle}
+              >
+                Delete group
+              </button>
+            </div>
+          ) : null}
         </div>
       ) : (
         <div>
@@ -240,7 +291,7 @@ const SingleGroup = () => {
             className="btn btn-info"
             type="button"
             onClick={addUserToGroup}
-            disabled = {userId ? false : true} 
+            disabled={userId ? false : true}
           >
             Enter group
           </button>

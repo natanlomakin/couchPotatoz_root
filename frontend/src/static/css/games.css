@@ -1,0 +1,67 @@
+.game-search {
+  margin: 2rem;
+  color: #f2ea4d;
+  position: relative;
+  padding: 1rem 0 0;
+  width: 20%;
+}
+
+.game-search-input {
+  font-family: inherit;
+  width: 100%;
+  border: 0;
+  border-bottom: 0.15rem solid #5d5775;
+  outline: 0;
+  font-size: 1.3rem;
+  color: white;
+  padding: 0.3rem 0;
+  background: transparent;
+  transition: border-color 0.2s;
+
+  &::placeholder {
+    color: transparent;
+  }
+
+  &:placeholder-shown ~ .input-label {
+    font-size: 1.3rem;
+    cursor: text;
+    top: 1rem;
+  }
+}
+
+.input-label {
+  position: absolute;
+  top: 0;
+  display: block;
+  transition: 0.2s;
+  font-size: 1rem;
+  color: #5d5775;
+}
+
+.game-search-input:focus {
+  ~ .input-label {
+    position: absolute;
+    top: 0;
+    display: block;
+    transition: 0.2s;
+    font-size: 1rem;
+    color: #8c00ff;
+    font-weight: 700;
+  }
+  padding-bottom: 6px;
+  font-weight: 700;
+  border-width: 3px;
+  border-image: linear-gradient(to right, #8c00ff, #cc00ff);
+  border-image-slice: 1;
+  &::placeholder {
+    color: #5d5775;
+    font-size: 1rem;
+  }
+}
+
+.game-search-input {
+  &:required,
+  &:invalid {
+    box-shadow: none;
+  }
+}
